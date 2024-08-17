@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "shortlist-rightmove-ingester"
+version = "0.1.0"
+description = "Ingests property listings from rightmove and sends the to a runner"
+authors = ["Simon Crowe <simon.r.crowe@protonmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = ">= 2.32.3"
+click = ">= 8.1.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
