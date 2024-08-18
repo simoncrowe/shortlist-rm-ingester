@@ -7,9 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-requests = ">= 2.32.3"
 click = ">= 8.1.7"
+redis = ">= 5.0.8"
+requests = ">= 2.32.3"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
 
 [build-system]
 requires = ["poetry-core"]
