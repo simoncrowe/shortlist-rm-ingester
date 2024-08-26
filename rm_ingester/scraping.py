@@ -59,8 +59,8 @@ def iter_listing_urls(result_page: str,
                       base_url: str) -> Iterator[tuple[int, str]]:
 
     soup = bs4.BeautifulSoup(result_page, "html.parser")
-
-    for a in soup.find_all("a", class_="propertyCard-link"):
+    search = soup.find("div", {"id": "propertySearch"})
+    for a in search.find_all("a", attrs={"data-test": "property-details"}):
         relative_link = a.get("href")
         identifier = re.search(LISTING_PATH_ID_REGEX, relative_link).group(1)
-        yield int(identifier), base_url + relative_link
+        yield (int(identifier), base_url + relative_link)

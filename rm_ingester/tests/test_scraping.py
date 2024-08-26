@@ -51,6 +51,7 @@ def test_iter_listing_urls(results_page):
 
     results = list(scraping.iter_listing_urls(results_page, base_url))
 
+    assert len(results) == 25  # 24 normal results + 1 featured
     assert results == [
         (151268708, "https://rm.co.uk/properties/151268708#/?channel=RES_LET"),
         (151626689, "https://rm.co.uk/properties/151626689#/?channel=RES_LET"),
