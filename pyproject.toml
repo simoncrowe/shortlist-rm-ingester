@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "shortlist-rightmove-ingester"
+name = "shortlist-rm-ingester"
 version = "0.1.0"
-description = "Ingests property listings from rightmove and sends the to a runner"
+description = "Ingests property listings from RM and sends the to a runner"
 authors = ["Simon Crowe <simon.r.crowe@protonmail.com>"]
 readme = "README.md"
 

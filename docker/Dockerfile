@@ -23,6 +23,6 @@ WORKDIR /code
 COPY poetry.lock pyproject.toml .
 RUN poetry install --no-interaction --no-ansi
 
-COPY rightmove_ingester ./rightmove_ingester
+COPY rm_ingester ./rm_ingester
 
-CMD ["python3", "/code/rightmove_ingester"]
+CMD ["python3", "/code/rm_ingester"]
