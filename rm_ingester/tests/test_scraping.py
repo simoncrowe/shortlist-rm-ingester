@@ -1,5 +1,4 @@
 from os import path
-from urllib import parse
 
 import pytest
 import scraping
@@ -16,7 +15,7 @@ def to_rent_url():
         "propertyTypes=bungalow%2Cdetached%2Cflat&"
         "includeLetAgreed=false&"
         "dontShow=houseShare%2Cretirement%2Cstudent&"
-        "furnishTypes=unfurnished&"
+        "furnishTypes=unfurnished"
     )
 
 
@@ -32,16 +31,13 @@ def test_iter_page_urls(to_rent_url):
     urls = list(scraping.iter_page_urls(to_rent_url))
 
     for page, (base_url, page_url) in enumerate(urls, start=0):
-        parsed_url = parse.urlparse(page_url)
+        url, query = page_url.split("?")
+        query_map = dict(pair.split("=") for pair in query.split("&"))
 
-        assert parsed_url.scheme == "https"
-        assert parsed_url.hostname == "www.rm.co.uk"
-
-        parsed_qs = parse.parse_qs(parsed_url.query)
-        assert len(parsed_qs) == 9
-
+        assert url == "https://www.rm.co.uk/property-to-rent/find.html"
+        assert len(query_map) == 9
         expected_index = str(page * 24)
-        assert parsed_qs["index"] == [expected_index]
+        assert query_map["index"] == expected_index
 
     assert base_url == "https://www.rm.co.uk"
 
@@ -79,3 +75,74 @@ def test_iter_listing_urls(results_page):
         (151624097, "https://rm.co.uk/properties/151624097#/?channel=RES_LET"),
         (151624082, "https://rm.co.uk/properties/151624082#/?channel=RES_LET"),
     ]
+
+
+def test_iter_listings(mocker, to_rent_url, results_page):
+    mock_iter_page_urls = mocker.patch("scraping.iter_page_urls")
+    first_page_url = f"{to_rent_url}&index=0"
+    mock_iter_page_urls.return_value = [
+        ("https://www.rm.co.uk", first_page_url)
+    ]
+    mock_sleep = mocker.patch("scraping.time.sleep")
+    mock_session_cls = mocker.patch("scraping.requests.Session")
+    mock_session = mock_session_cls.return_value
+    mock_session.headers = {}
+    dummy_listing = (
+        "<html><head><title>foo</title></head><body><p>bar</p></body></html>"
+    )
+
+    def get_stub(url):
+        if url == first_page_url:
+            return mocker.Mock(content=results_page, status_code=200)
+        elif url.startswith("https://www.rm.co.uk/properties/"):
+            return mocker.Mock(content=dummy_listing, status_code=200)
+
+    mock_session.get.side_effect = get_stub
+
+    for _, listing in scraping.iter_listings(to_rent_url):
+        assert listing == dummy_listing
+
+    assert mock_session.headers["User-Agent"] in scraping.USER_AGENTS
+    assert mock_session.get.call_count == 26
+    assert mock_sleep.call_count == 26
+
+
+def test_iter_listings_bad_page_resp(mocker, to_rent_url, results_page):
+    mock_session_cls = mocker.patch("scraping.requests.Session")
+    mock_session = mock_session_cls.return_value
+
+    def get_stub(url):
+        return mocker.Mock(status_code=400)
+
+    mock_session.get.side_effect = get_stub
+
+    listings = list(scraping.iter_listings(to_rent_url))
+
+    assert listings == []
+    assert mock_session.get.call_count == 1
+
+
+def test_iter_listings_bad_list_resp(mocker, to_rent_url, results_page):
+    mock_iter_page_urls = mocker.patch("scraping.iter_page_urls")
+    first_page_url = f"{to_rent_url}&index=0"
+    mock_iter_page_urls.return_value = [
+        ("https://www.rm.co.uk", first_page_url)
+    ]
+    mock_sleep = mocker.patch("scraping.time.sleep")
+    mock_session_cls = mocker.patch("scraping.requests.Session")
+    mock_session = mock_session_cls.return_value
+    mock_session.headers = {}
+
+    def get_stub(url):
+        if url == first_page_url:
+            return mocker.Mock(content=results_page, status_code=200)
+        elif url.startswith("https://www.rm.co.uk/properties/"):
+            return mocker.Mock(status_code=400)
+
+    mock_session.get.side_effect = get_stub
+
+    listings = list(scraping.iter_listings(to_rent_url))
+
+    assert listings == []
+    assert mock_session.get.call_count == 2
+    assert mock_sleep.call_count == 1

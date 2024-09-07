@@ -29,7 +29,6 @@ def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
     session.headers["User-Agent"] = random.choice(USER_AGENTS)
 
     for base_url, page_url in iter_page_urls(first_page_url):
-
         page_resp = session.get(page_url)
         if page_resp.status_code != 200:
             break
@@ -38,7 +37,11 @@ def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
 
         for listing_id, listing_url in iter_listing_urls(page_resp.content,
                                                          base_url):
+
             listing_resp = session.get(listing_url)
+            if listing_resp.status_code != 200:
+                break
+
             yield listing_id, listing_resp.content
 
             time.sleep(random.randrange(MIN_WAIT_SECS, MAX_WAIT_SECS))
@@ -49,7 +52,7 @@ def iter_page_urls(first_page_url: str) -> Iterator[tuple[str, str]]:
     base_url = f"{url.scheme}://{url.hostname}"
     query_map = parse.parse_qs(url.query)
 
-    # Scrape up to the last page of 24 results (42)
+    # Scrape up to the last page of 24 results (page 42)
     for index in range(0, 1008, 24):
         page_query = parse.urlencode({**query_map, "index": index}, doseq=True)
         yield base_url, f"{base_url}{url.path}?{page_query}"
