@@ -1,3 +1,4 @@
+import data
 import scraping
 
 
@@ -62,7 +63,7 @@ def test_iter_listings(mocker, to_rent_url, results_page):
     mock_session = mock_session_cls.return_value
     mock_session.headers = {}
     dummy_listing = (
-        "<html><head><title>foo</title></head><body><p>bar</p></body></html>"
+        b"<html><head><title>foo</title></head><body><p>bar</p></body></html>"
     )
 
     def get_stub(url):
@@ -74,7 +75,7 @@ def test_iter_listings(mocker, to_rent_url, results_page):
     mock_session.get.side_effect = get_stub
 
     for _, listing in scraping.iter_listings(to_rent_url):
-        assert listing == dummy_listing
+        assert listing == dummy_listing.decode()
 
     assert mock_session.headers["User-Agent"] in scraping.USER_AGENTS
     assert mock_session.get.call_count == 26
@@ -120,3 +121,20 @@ def test_iter_listings_bad_list_resp(mocker, to_rent_url, results_page):
     assert listings == []
     assert mock_session.get.call_count == 2
     assert mock_sleep.call_count == 1
+
+
+def test_profile_from_listing_html(mocker, listing_one_page):
+    mocker.patch("scraping.BASE_LISTING_URL",
+                 "https://www.rm.co.uk/properties")
+
+    result = scraping.profile_from_listing_html(listing_one_page)
+
+    assert result == data.Profile(
+        text="Two Bedroom Top Floor Maisonette...",
+        metadata=data.ProfileMetadata(
+            url="https://www.rm.co.uk/properties/151625369",
+            price="£1,700 pcm",
+            location="St. Marks Road, Enfield",
+            summary="2 bedroom maisonette",
+        )
+    )

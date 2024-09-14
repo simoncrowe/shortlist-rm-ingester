@@ -23,7 +23,7 @@ def to_rent_url():
 def results_page():
     test_dir = path.dirname(__file__)
     fixture_path = path.join(test_dir, "fixtures", "results-page.html")
-    with open(fixture_path) as file_obj:
+    with open(fixture_path, "rb") as file_obj:
         return file_obj.read()
 
 
