@@ -7,7 +7,7 @@ class SetStore(typing.Protocol):
     """
 
     def __contains__(self, item: typing.Any):
-        pass
+        """Does the store contain an item."""
 
     def add(self, item: typing.Any):
-        pass
+        """Add and item to the store"""

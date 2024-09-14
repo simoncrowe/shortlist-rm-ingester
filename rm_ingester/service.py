@@ -5,10 +5,9 @@ import protocols
 import scraping
 
 
-def ingest_listings(url: str,
-                    ingested: protocols.SetStore,
-                    listings: typing.Iterable[tuple[int, str]],
-                    ingest_callback: typing.Callable[[data.Profile], None]):
+def ingest_listings(listings: typing.Iterable[tuple[int, str]],
+                    ingest_callback: typing.Callable[[data.Profile], None],
+                    ingested: protocols.SetStore):
 
     for identifier, listing in listings:
         if identifier in ingested:

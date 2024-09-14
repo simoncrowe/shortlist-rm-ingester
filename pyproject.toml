@@ -26,3 +26,7 @@ build-backend = "poetry.core.masonry.api"
 
 [mypy]
 mypy_path = "rm_ingester"
+
+[tool.isort]
+profile = "hug"
+src_paths = ["rm_ingester"]
