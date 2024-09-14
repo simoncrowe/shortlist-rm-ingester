@@ -51,3 +51,29 @@ def listing_one_profile():
             summary="2 bedroom maisonette",
         )
     )
+
+
+@pytest.fixture(scope="session")
+def listing_two_page():
+    test_dir = path.dirname(__file__)
+    fixture_path = path.join(test_dir, "fixtures", "listing-two-page.html")
+    with open(fixture_path) as file_obj:
+        return file_obj.read()
+
+
+@pytest.fixture(scope="session")
+def listing_two_identifier():
+    return 151624097
+
+
+@pytest.fixture(scope="session")
+def listing_two_profile():
+    return data.Profile(
+        text="Old Kant Road is a hub of activity...",
+        metadata=data.ProfileMetadata(
+            url="https://www.rm.co.uk/properties/151624097",
+            price="£1,595 pcm",
+            location="8 Hendre Road London SE1",
+            summary="1 bedroom apartment",
+        )
+    )

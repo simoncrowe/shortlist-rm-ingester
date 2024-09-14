@@ -7,7 +7,7 @@ import scraping
 def ingest_listings(url: str,
                     ingested: protocols.SetStore,
                     listings: typing.Iterable[tuple[int, str]],
-                    runner_callback: typing.Callable):
+                    ingest_callback: typing.Callable):
 
     for identifier, listing in listings:
         if identifier in ingested:
@@ -15,4 +15,5 @@ def ingest_listings(url: str,
 
         profile = scraping.profile_from_listing_html(listing)
 
-        runner_callback(identifier, profile)
+        ingest_callback(profile)
+        ingested.add(identifier)
