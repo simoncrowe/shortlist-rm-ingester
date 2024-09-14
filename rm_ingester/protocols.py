@@ -6,8 +6,8 @@ class SetStore(typing.Protocol):
     supporting adding members and membership checks.
     """
 
-    def __contains__(self, item: str):
+    def __contains__(self, item: typing.Any):
         pass
 
-    def add(self, item: str):
+    def add(self, item: typing.Any):
         pass

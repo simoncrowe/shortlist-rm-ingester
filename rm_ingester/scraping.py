@@ -40,13 +40,13 @@ def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
 
         time.sleep(random.randrange(MIN_WAIT_SECS, MAX_WAIT_SECS))
 
-        for listing_id, listing_url in iter_listing_urls(page_resp.content,
-                                                         base_url):
+        page = page_resp.content.decode()
+        for listing_id, listing_url in iter_listing_urls(page, base_url):
             listing_resp = session.get(listing_url)
             if listing_resp.status_code != 200:
                 break
 
-            yield listing_id, listing_resp.content
+            yield listing_id, listing_resp.content.decode()
 
             time.sleep(random.randrange(MIN_WAIT_SECS, MAX_WAIT_SECS))
 
@@ -66,10 +66,14 @@ def iter_listing_urls(result_page: str,
                       base_url: str) -> Iterator[tuple[int, str]]:
 
     soup = bs4.BeautifulSoup(result_page, "html.parser")
-    search = soup.find("div", {"id": "propertySearch"})
-    for a in search.find_all("a", attrs={"data-test": "property-details"}):
+    if not (search := soup.find("div", {"id": "propertySearch"})):
+        return
+    query = {"data-test": "property-details"}
+    for a in search.find_all("a", attrs=query):  # type: ignore
         relative_link = a.get("href")
-        identifier = re.search(LISTING_PATH_ID_REGEX, relative_link).group(1)
+        if not (match := re.search(LISTING_PATH_ID_REGEX, relative_link)):
+            continue
+        identifier = match.group(1)
         yield (int(identifier), base_url + relative_link)
 
 
