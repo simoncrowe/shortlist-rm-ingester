@@ -1,3 +1,5 @@
+import json
+import os
 import random
 import re
 import time
@@ -5,8 +7,10 @@ from typing import Iterator
 from urllib import parse
 
 import bs4
+import data
 import requests
 
+BASE_LISTING_URL = os.getenv("BASE_LISTING_URL", "")
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",  # noqa
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",  # noqa
@@ -22,6 +26,7 @@ USER_AGENTS = [
 MIN_WAIT_SECS = 1
 MAX_WAIT_SECS = 3
 LISTING_PATH_ID_REGEX = r"^\/properties\/([0-9]+)#/"
+PAGE_MODEL_ASSIGNMENT_JS = "window.PAGE_MODEL = "
 
 
 def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
@@ -37,7 +42,6 @@ def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
 
         for listing_id, listing_url in iter_listing_urls(page_resp.content,
                                                          base_url):
-
             listing_resp = session.get(listing_url)
             if listing_resp.status_code != 200:
                 break
@@ -67,3 +71,20 @@ def iter_listing_urls(result_page: str,
         relative_link = a.get("href")
         identifier = re.search(LISTING_PATH_ID_REGEX, relative_link).group(1)
         yield (int(identifier), base_url + relative_link)
+
+
+def profile_from_listing_html(page: str) -> data.Profile:
+    model_line = next(line for line in page.splitlines()
+                      if line.strip().startswith(PAGE_MODEL_ASSIGNMENT_JS))
+    model_json = model_line.split(PAGE_MODEL_ASSIGNMENT_JS)[-1]
+    model_data = json.loads(model_json)
+
+    return data.Profile(
+        text=model_data["propertyData"]["text"]["description"],
+        metadata=data.ProfileMetadata(
+            price=model_data["propertyData"]["prices"]["primaryPrice"],
+            location=model_data["propertyData"]["address"]["displayAddress"],
+            summary=model_data["propertyData"]["text"]["propertyPhrase"],
+            url=f"{BASE_LISTING_URL}/{model_data['propertyData']['id']}"
+        )
+    )
