@@ -2,7 +2,6 @@ import service
 
 
 def test_ingest_single_listing(mocker,
-                               to_rent_url,
                                listing_one_page,
                                listing_one_identifier,
                                listing_one_profile):
@@ -14,8 +13,7 @@ def test_ingest_single_listing(mocker,
 
     listings = [(listing_one_identifier, listing_one_page)]
 
-    service.ingest_listings(url=to_rent_url,
-                            ingested=ingested,
+    service.ingest_listings(ingested=ingested,
                             listings=listings,
                             ingest_callback=results.append)
 
@@ -24,7 +22,6 @@ def test_ingest_single_listing(mocker,
 
 
 def test_ingest_two_listings(mocker,
-                             to_rent_url,
                              listing_one_page,
                              listing_one_identifier,
                              listing_one_profile,
@@ -40,8 +37,7 @@ def test_ingest_two_listings(mocker,
     listings = [(listing_one_identifier, listing_one_page),
                 (listing_two_identifier, listing_two_page)]
 
-    service.ingest_listings(url=to_rent_url,
-                            ingested=ingested,
+    service.ingest_listings(ingested=ingested,
                             listings=listings,
                             ingest_callback=results.append)
 
@@ -50,7 +46,6 @@ def test_ingest_two_listings(mocker,
 
 
 def test_ingest_skips_ingested(mocker,
-                               to_rent_url,
                                listing_one_page,
                                listing_one_identifier,
                                listing_two_page,
@@ -65,8 +60,7 @@ def test_ingest_skips_ingested(mocker,
     listings = [(listing_one_identifier, listing_one_page),
                 (listing_two_identifier, listing_two_page)]
 
-    service.ingest_listings(url=to_rent_url,
-                            ingested=ingested,
+    service.ingest_listings(ingested=ingested,
                             listings=listings,
                             ingest_callback=results.append)
 
