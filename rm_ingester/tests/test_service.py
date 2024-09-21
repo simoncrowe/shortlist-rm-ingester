@@ -48,13 +48,14 @@ def test_ingest_two_listings(mocker,
 def test_ingest_skips_ingested(mocker,
                                listing_one_page,
                                listing_one_identifier,
+                               listing_one_profile,
                                listing_two_page,
                                listing_two_identifier,
                                listing_two_profile):
 
     mocker.patch("scraping.BASE_LISTING_URL",
                  "https://www.rm.co.uk/properties")
-    ingested = {listing_one_identifier}
+    ingested = {listing_two_identifier}
     results = []
 
     listings = [(listing_one_identifier, listing_one_page),
@@ -64,5 +65,5 @@ def test_ingest_skips_ingested(mocker,
                             listings=listings,
                             ingest_callback=results.append)
 
-    assert results == [listing_two_profile]
+    assert results == [listing_one_profile]
     assert ingested == {listing_one_identifier, listing_two_identifier}

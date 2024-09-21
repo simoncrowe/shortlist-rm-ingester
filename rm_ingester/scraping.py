@@ -7,8 +7,9 @@ from typing import Iterator
 from urllib import parse
 
 import bs4
-import data
 import requests
+
+import data
 
 BASE_LISTING_URL = os.getenv("BASE_LISTING_URL", "")
 USER_AGENTS = [
@@ -35,16 +36,18 @@ def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
 
     for base_url, page_url in iter_page_urls(first_page_url):
         page_resp = session.get(page_url)
-        if page_resp.status_code != 200:
-            break
+        page_resp.raise_for_status()
 
         time.sleep(random.randrange(MIN_WAIT_SECS, MAX_WAIT_SECS))
 
         page = page_resp.content.decode()
-        for listing_id, listing_url in iter_listing_urls(page, base_url):
+
+        if not (urls := list(iter_listing_urls(page, base_url))):
+            return
+
+        for listing_id, listing_url in urls:
             listing_resp = session.get(listing_url)
-            if listing_resp.status_code != 200:
-                break
+            listing_resp.raise_for_status()
 
             yield listing_id, listing_resp.content.decode()
 

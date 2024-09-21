@@ -1,3 +1,5 @@
+import pytest
+
 import data
 import scraping
 
@@ -87,13 +89,15 @@ def test_iter_listings_bad_page_resp(mocker, to_rent_url, results_page):
     mock_session = mock_session_cls.return_value
 
     def get_stub(url):
-        return mocker.Mock(status_code=400)
+        resp = mocker.Mock(status_code=400)
+        resp.raise_for_status.side_effect = Exception
+        return resp
 
     mock_session.get.side_effect = get_stub
 
-    listings = list(scraping.iter_listings(to_rent_url))
+    with pytest.raises(Exception):
+        list(scraping.iter_listings(to_rent_url))
 
-    assert listings == []
     assert mock_session.get.call_count == 1
 
 
@@ -112,13 +116,15 @@ def test_iter_listings_bad_list_resp(mocker, to_rent_url, results_page):
         if url == first_page_url:
             return mocker.Mock(content=results_page, status_code=200)
         elif url.startswith("https://www.rm.co.uk/properties/"):
-            return mocker.Mock(status_code=400)
+            resp = mocker.Mock(status_code=400)
+            resp.raise_for_status.side_effect = Exception
+            return resp
 
     mock_session.get.side_effect = get_stub
 
-    listings = list(scraping.iter_listings(to_rent_url))
+    with pytest.raises(Exception):
+        list(scraping.iter_listings(to_rent_url))
 
-    assert listings == []
     assert mock_session.get.call_count == 2
     assert mock_sleep.call_count == 1
 

@@ -16,21 +16,24 @@ import service
 @click.command()
 @click.argument("url")
 def main(url):
-    redis_host = os.getenv("REDIS_HOST")
     runner_url = os.getenv("RUNNER_URL")
-    redis_client = redis.Redis(host=redis_host)
+
+    def _send_to_runner(profile: data.Profile):
+        profile_data = dataclasses.asdict(profile)
+        payload = json.dumps(profile_data)
+        resp = requests.post(runner_url, payload)
+        resp.raise_for_status()
+
+    redis_host = os.getenv("REDIS_HOST")
+    redis_pass = os.getenv("REDIS_PASS")
+
+    redis_client = redis.Redis(host=redis_host, password=redis_pass)
+    ingested = adapters.RedisSetStore(redis_client, namespace="ingested-rm")
 
     listings_gen = scraping.iter_listings(url)
 
-    def send_to_runner(profile: data.Profile):
-        profile_data = dataclasses.asdict(profile)
-        payload = json.dumps(profile_data)
-        requests.post(runner_url, payload)
-
-    ingested = adapters.RedisSetStore(redis_client, namespace="ingested-rm")
-
     service.ingest_listings(listings_gen,
-                            ingest_callback=send_to_runner,
+                            ingest_callback=_send_to_runner,
                             ingested=ingested)
 
 
