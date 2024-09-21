@@ -1,2 +1,2 @@
-# shorlist-rightmove-ingester
-Ingests property listings from rightmove and sends the to a runner
+# shorlist-rm-ingester
+Ingests property listings from RM and sends them to a [runner](https://github.com/simoncrowe/shortlist-runner).

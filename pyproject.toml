@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "shortlist-rm-ingester"
+version = "0.1.0"
+description = "Ingests property listings from RM and sends the to a runner"
+authors = ["Simon Crowe <simon.r.crowe@protonmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+click = ">=8.1.7"
+redis = ">=5.0.8"
+requests = ">=2.32.3"
+beautifulsoup4 = ">=4.12.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.3.2"
+pytest-mock = ">=3.14.0"
+ipdb = ">=0.13.13"
+mypy = ">=1.11.2"
+types-beautifulsoup4 = ">=4.12.0.20240907"
+types-requests = ">=2.32.0.20240914"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[mypy]
+mypy_path = "rm_ingester"
+
+[tool.isort]
+profile = "hug"
+src_paths = ["rm_ingester"]
