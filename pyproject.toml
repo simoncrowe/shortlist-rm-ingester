@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shortlist-rm-ingester"
-version = "1.0.0"
+version = "1.0.1"
 description = "Ingests property listings from RM and sends the to a runner"
 authors = ["Simon Crowe <simon.r.crowe@protonmail.com>"]
 readme = "README.md"

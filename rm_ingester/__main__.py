@@ -72,7 +72,7 @@ def record(ctx: click.Context, results_url: str,
         redis_client.lpush(db_key, json.dumps(profile_data))
 
         saved_count += 1
-        logger.info("Profiled persisted.",
+        logger.info("Profile persisted.",
                     profiles_count=saved_count,
                     profile_url=profile.metadata.url,
                     redis_key=db_key)
