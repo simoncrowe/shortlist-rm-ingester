@@ -6,13 +6,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'poetry'
-      - name: Install dependencies
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          poetry install --with=dev
+          #poetry install --with=dev
       - name: Test with pytest
         run: poetry run pytest
