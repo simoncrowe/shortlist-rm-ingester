@@ -25,4 +25,4 @@ RUN poetry install --no-interaction --no-ansi
 
 COPY rm_ingester ./rm_ingester
 
-ENTRYPOINT ["python3", "/code/rm_ingester"]
+ENTRYPOINT ["python3", "/code/rm_ingester", "ingest"]
