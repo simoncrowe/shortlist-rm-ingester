@@ -8,6 +8,7 @@ from urllib import parse
 
 import bs4
 import requests
+import structlog
 
 import data
 
@@ -29,6 +30,8 @@ MAX_WAIT_SECS = 3
 LISTING_PATH_ID_REGEX = r"^\/properties\/([0-9]+)#/"
 PAGE_MODEL_ASSIGNMENT_JS = "window.PAGE_MODEL = "
 
+logger = structlog.getLogger(__name__)
+
 
 def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
     session = requests.Session()
@@ -37,6 +40,9 @@ def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
     for base_url, page_url in iter_page_urls(first_page_url):
         page_resp = session.get(page_url)
         page_resp.raise_for_status()
+        logger.debug("Got results page",
+                     headers=page_resp.headers,
+                     body=page_resp.content)
 
         time.sleep(random.randrange(MIN_WAIT_SECS, MAX_WAIT_SECS))
 
