@@ -1,4 +1,5 @@
 import pytest
+import requests
 
 import data
 import scraping
@@ -22,36 +23,35 @@ def test_iter_page_urls(to_rent_url):
 def test_iter_listing_urls(results_page):
     base_url = "https://rm.co.uk"
 
-    results = list(scraping.iter_listing_urls(results_page, base_url))
+    results = set(scraping.iter_listing_urls(results_page, base_url))
 
-    assert len(results) == 25  # 24 normal results + 1 featured
-    assert results == [
-        (151268708, "https://rm.co.uk/properties/151268708#/?channel=RES_LET"),
-        (151626689, "https://rm.co.uk/properties/151626689#/?channel=RES_LET"),
-        (151626230, "https://rm.co.uk/properties/151626230#/?channel=RES_LET"),
-        (151625894, "https://rm.co.uk/properties/151625894#/?channel=RES_LET"),
-        (151625804, "https://rm.co.uk/properties/151625804#/?channel=RES_LET"),
-        (120819272, "https://rm.co.uk/properties/120819272#/?channel=RES_LET"),
-        (151625567, "https://rm.co.uk/properties/151625567#/?channel=RES_LET"),
-        (151625369, "https://rm.co.uk/properties/151625369#/?channel=RES_LET"),
-        (151625381, "https://rm.co.uk/properties/151625381#/?channel=RES_LET"),
-        (151329554, "https://rm.co.uk/properties/151329554#/?channel=RES_LET"),
-        (151625171, "https://rm.co.uk/properties/151625171#/?channel=RES_LET"),
-        (150066716, "https://rm.co.uk/properties/150066716#/?channel=RES_LET"),
-        (151625024, "https://rm.co.uk/properties/151625024#/?channel=RES_LET"),
-        (151624967, "https://rm.co.uk/properties/151624967#/?channel=RES_LET"),
-        (151624928, "https://rm.co.uk/properties/151624928#/?channel=RES_LET"),
-        (151624880, "https://rm.co.uk/properties/151624880#/?channel=RES_LET"),
-        (151624841, "https://rm.co.uk/properties/151624841#/?channel=RES_LET"),
-        (151624832, "https://rm.co.uk/properties/151624832#/?channel=RES_LET"),
-        (151624775, "https://rm.co.uk/properties/151624775#/?channel=RES_LET"),
-        (151624742, "https://rm.co.uk/properties/151624742#/?channel=RES_LET"),
-        (151624670, "https://rm.co.uk/properties/151624670#/?channel=RES_LET"),
-        (58973337, "https://rm.co.uk/properties/58973337#/?channel=RES_LET"),
-        (151624205, "https://rm.co.uk/properties/151624205#/?channel=RES_LET"),
-        (151624097, "https://rm.co.uk/properties/151624097#/?channel=RES_LET"),
-        (151624082, "https://rm.co.uk/properties/151624082#/?channel=RES_LET"),
-    ]
+    assert len(results) == 24
+    assert results == {
+        (27487032, 'https://rm.co.uk/properties/27487032#/?channel=RES_LET'),
+        (157252958, 'https://rm.co.uk/properties/157252958#/?channel=RES_LET'),
+        (157971347, 'https://rm.co.uk/properties/157971347#/?channel=RES_LET'),
+        (158159990, 'https://rm.co.uk/properties/158159990#/?channel=RES_LET'),
+        (158435789, 'https://rm.co.uk/properties/158435789#/?channel=RES_LET'),
+        (158528063, 'https://rm.co.uk/properties/158528063#/?channel=RES_LET'),
+        (158561030, 'https://rm.co.uk/properties/158561030#/?channel=RES_LET'),
+        (158591858, 'https://rm.co.uk/properties/158591858#/?channel=RES_LET'),
+        (158592008, 'https://rm.co.uk/properties/158592008#/?channel=RES_LET'),
+        (158592122, 'https://rm.co.uk/properties/158592122#/?channel=RES_LET'),
+        (158592149, 'https://rm.co.uk/properties/158592149#/?channel=RES_LET'),
+        (158592308, 'https://rm.co.uk/properties/158592308#/?channel=RES_LET'),
+        (158592314, 'https://rm.co.uk/properties/158592314#/?channel=RES_LET'),
+        (158592644, 'https://rm.co.uk/properties/158592644#/?channel=RES_LET'),
+        (158592677, 'https://rm.co.uk/properties/158592677#/?channel=RES_LET'),
+        (158592707, 'https://rm.co.uk/properties/158592707#/?channel=RES_LET'),
+        (158592917, 'https://rm.co.uk/properties/158592917#/?channel=RES_LET'),
+        (158593142, 'https://rm.co.uk/properties/158593142#/?channel=RES_LET'),
+        (158593172, 'https://rm.co.uk/properties/158593172#/?channel=RES_LET'),
+        (158593412, 'https://rm.co.uk/properties/158593412#/?channel=RES_LET'),
+        (158593427, 'https://rm.co.uk/properties/158593427#/?channel=RES_LET'),
+        (158593526, 'https://rm.co.uk/properties/158593526#/?channel=RES_LET'),
+        (158593592, 'https://rm.co.uk/properties/158593592#/?channel=RES_LET'),
+        (158593811, 'https://rm.co.uk/properties/158593811#/?channel=RES_LET')
+    }
 
 
 def test_iter_listings(mocker, to_rent_url, results_page):
@@ -70,9 +70,13 @@ def test_iter_listings(mocker, to_rent_url, results_page):
 
     def get_stub(url):
         if url == first_page_url:
-            return mocker.Mock(content=results_page, status_code=200)
+            return mocker.Mock(content=results_page,
+                               status_code=200,
+                               headers={})
         elif url.startswith("https://www.rm.co.uk/properties/"):
-            return mocker.Mock(content=dummy_listing, status_code=200)
+            return mocker.Mock(content=dummy_listing,
+                               status_code=200,
+                               headers={})
 
     mock_session.get.side_effect = get_stub
 
@@ -114,15 +118,19 @@ def test_iter_listings_bad_list_resp(mocker, to_rent_url, results_page):
 
     def get_stub(url):
         if url == first_page_url:
-            return mocker.Mock(content=results_page, status_code=200)
+            return mocker.Mock(content=results_page,
+                               status_code=200,
+                               headers={})
         elif url.startswith("https://www.rm.co.uk/properties/"):
-            resp = mocker.Mock(status_code=400)
-            resp.raise_for_status.side_effect = Exception
+            resp = mocker.Mock(status_code=400, headers={})
+            resp.raise_for_status.side_effect = (
+                requests.exceptions.RequestException
+            )
             return resp
 
     mock_session.get.side_effect = get_stub
 
-    with pytest.raises(Exception):
+    with pytest.raises(requests.exceptions.RequestException):
         list(scraping.iter_listings(to_rent_url))
 
     assert mock_session.get.call_count == 2
