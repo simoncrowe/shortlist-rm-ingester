@@ -80,9 +80,9 @@ def iter_listing_urls(result_page: str,
                       base_url: str) -> Iterator[tuple[int, str]]:
 
     soup = bs4.BeautifulSoup(result_page, "html.parser")
-    if not (search := soup.find("div", {"id": "propertySearch"})):
+    if not (search := soup.find("div", {"id": "l-searchResults"})):
         return
-    query = {"data-test": "property-details"}
+    query = {"data-testid": "property-details"}
     for a in search.find_all("a", attrs=query):  # type: ignore
         relative_link = a.get("href")
         if not (match := re.search(LISTING_PATH_ID_REGEX, relative_link)):
