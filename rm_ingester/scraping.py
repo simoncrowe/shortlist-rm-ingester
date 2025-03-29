@@ -49,6 +49,7 @@ def iter_listings(first_page_url: str) -> Iterator[tuple[int, str]]:
         page = page_resp.content.decode()
 
         if not (urls := list(iter_listing_urls(page, base_url))):
+            logger.info("No listing URLs found", page_url=page_url)
             return
 
         for listing_id, listing_url in urls:
@@ -82,7 +83,7 @@ def iter_listing_urls(result_page: str,
     soup = bs4.BeautifulSoup(result_page, "html.parser")
     if not (search := soup.find("div", {"id": "l-searchResults"})):
         return
-    query = {"data-testid": "property-details"}
+    query = {"data-test": "property-details"}
     for a in search.find_all("a", attrs=query):  # type: ignore
         relative_link = a.get("href")
         if not (match := re.search(LISTING_PATH_ID_REGEX, relative_link)):
