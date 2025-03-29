@@ -25,32 +25,33 @@ def test_iter_listing_urls(results_page):
 
     results = set(scraping.iter_listing_urls(results_page, base_url))
 
-    assert len(results) == 24
+    assert len(results) == 25
     assert results == {
-        (27487032, 'https://rm.co.uk/properties/27487032#/?channel=RES_LET'),
-        (157252958, 'https://rm.co.uk/properties/157252958#/?channel=RES_LET'),
-        (157971347, 'https://rm.co.uk/properties/157971347#/?channel=RES_LET'),
-        (158159990, 'https://rm.co.uk/properties/158159990#/?channel=RES_LET'),
-        (158435789, 'https://rm.co.uk/properties/158435789#/?channel=RES_LET'),
-        (158528063, 'https://rm.co.uk/properties/158528063#/?channel=RES_LET'),
-        (158561030, 'https://rm.co.uk/properties/158561030#/?channel=RES_LET'),
-        (158591858, 'https://rm.co.uk/properties/158591858#/?channel=RES_LET'),
-        (158592008, 'https://rm.co.uk/properties/158592008#/?channel=RES_LET'),
-        (158592122, 'https://rm.co.uk/properties/158592122#/?channel=RES_LET'),
-        (158592149, 'https://rm.co.uk/properties/158592149#/?channel=RES_LET'),
-        (158592308, 'https://rm.co.uk/properties/158592308#/?channel=RES_LET'),
-        (158592314, 'https://rm.co.uk/properties/158592314#/?channel=RES_LET'),
-        (158592644, 'https://rm.co.uk/properties/158592644#/?channel=RES_LET'),
-        (158592677, 'https://rm.co.uk/properties/158592677#/?channel=RES_LET'),
-        (158592707, 'https://rm.co.uk/properties/158592707#/?channel=RES_LET'),
-        (158592917, 'https://rm.co.uk/properties/158592917#/?channel=RES_LET'),
-        (158593142, 'https://rm.co.uk/properties/158593142#/?channel=RES_LET'),
-        (158593172, 'https://rm.co.uk/properties/158593172#/?channel=RES_LET'),
-        (158593412, 'https://rm.co.uk/properties/158593412#/?channel=RES_LET'),
-        (158593427, 'https://rm.co.uk/properties/158593427#/?channel=RES_LET'),
-        (158593526, 'https://rm.co.uk/properties/158593526#/?channel=RES_LET'),
-        (158593592, 'https://rm.co.uk/properties/158593592#/?channel=RES_LET'),
-        (158593811, 'https://rm.co.uk/properties/158593811#/?channel=RES_LET')
+        (87135699, 'https://rm.co.uk/properties/87135699#/?channel=RES_LET'),
+        (114626912, 'https://rm.co.uk/properties/114626912#/?channel=RES_LET'),
+        (125788652, 'https://rm.co.uk/properties/125788652#/?channel=RES_LET'),
+        (157381913, 'https://rm.co.uk/properties/157381913#/?channel=RES_LET'),
+        (158937452, 'https://rm.co.uk/properties/158937452#/?channel=RES_LET'),
+        (159234344, 'https://rm.co.uk/properties/159234344#/?channel=RES_LET'),
+        (159462437, 'https://rm.co.uk/properties/159462437#/?channel=RES_LET'),
+        (159719024, 'https://rm.co.uk/properties/159719024#/?channel=RES_LET'),
+        (159766613, 'https://rm.co.uk/properties/159766613#/?channel=RES_LET'),
+        (159893033, 'https://rm.co.uk/properties/159893033#/?channel=RES_LET'),
+        (159989135, 'https://rm.co.uk/properties/159989135#/?channel=RES_LET'),
+        (159989972, 'https://rm.co.uk/properties/159989972#/?channel=RES_LET'),
+        (159990008, 'https://rm.co.uk/properties/159990008#/?channel=RES_LET'),
+        (159992048, 'https://rm.co.uk/properties/159992048#/?channel=RES_LET'),
+        (159992444, 'https://rm.co.uk/properties/159992444#/?channel=RES_LET'),
+        (159992603, 'https://rm.co.uk/properties/159992603#/?channel=RES_LET'),
+        (159992699, 'https://rm.co.uk/properties/159992699#/?channel=RES_LET'),
+        (159993188, 'https://rm.co.uk/properties/159993188#/?channel=RES_LET'),
+        (159993224, 'https://rm.co.uk/properties/159993224#/?channel=RES_LET'),
+        (159994016, 'https://rm.co.uk/properties/159994016#/?channel=RES_LET'),
+        (159994241, 'https://rm.co.uk/properties/159994241#/?channel=RES_LET'),
+        (159994874, 'https://rm.co.uk/properties/159994874#/?channel=RES_LET'),
+        (159994979, 'https://rm.co.uk/properties/159994979#/?channel=RES_LET'),
+        (159995372, 'https://rm.co.uk/properties/159995372#/?channel=RES_LET'),
+        (159995486, 'https://rm.co.uk/properties/159995486#/?channel=RES_LET')
     }
 
 
