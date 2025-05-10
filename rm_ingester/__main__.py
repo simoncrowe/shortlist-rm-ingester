@@ -42,6 +42,7 @@ def ingest(ctx: click.Context, results_url: str, runner_url: str):
         payload = json.dumps(profile_data)
         resp = requests.post(runner_url, payload)
         resp.raise_for_status()
+        logger.info("Profile ingested.", profile_data=profile_data)
 
     ingested = adapters.RedisSetStore(redis_client, namespace=INGESTED_KEY)
 
